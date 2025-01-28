@@ -75,10 +75,10 @@ SOCKET_PORT=5173
 http://localhost:8000/api-docs
 
 Available Features
-User Routes
-POST /user/signup - Register a new user.
+**User Routes
+**POST /user/signup - Register a new user.
 POST /user/login - Authenticate a user.
-POST /user/refresh-token - Refresh JWT tokens.
+**POST /user/refresh-token - Refresh JWT tokens.
 Group Routes
 GET /group - Fetch all available groups.
 GET /group/:id - Get group details by ID.
