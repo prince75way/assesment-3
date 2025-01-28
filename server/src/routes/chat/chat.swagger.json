@@ -1,0 +1,192 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "title": "Chat API",
+      "description": "API for sending and retrieving messages in a group chat.",
+      "version": "1.0.0"
+    },
+    "components": {
+      "schemas": {
+        "Message": {
+          "type": "object",
+          "properties": {
+            "groupId": {
+              "type": "string",
+              "description": "The ID of the group the message is being sent to."
+            },
+            "message": {
+              "type": "string",
+              "description": "The content of the message."
+            }
+          },
+          "required": ["groupId", "message"]
+        },
+        "ChatResponse": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": true
+            },
+            "message": {
+              "type": "string",
+              "example": "Message sent successfully"
+            }
+          }
+        },
+        "MessagesResponse": {
+          "type": "object",
+          "properties": {
+            "success": {
+              "type": "boolean",
+              "example": true
+            },
+            "messages": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "sender": {
+                    "type": "string",
+                    "description": "The sender of the message."
+                  },
+                  "message": {
+                    "type": "string",
+                    "description": "The content of the message."
+                  },
+                  "timestamp": {
+                    "type": "string",
+                    "description": "The time the message was sent."
+                  }
+                }
+              },
+              "example": [
+                {
+                  "sender": "user1",
+                  "message": "Hello!",
+                  "timestamp": "2025-01-28T10:00:00Z"
+                }
+              ]
+            }
+          }
+        },
+        "Error": {
+          "type": "object",
+          "properties": {
+            "error": {
+              "type": "string",
+              "example": "Invalid message content."
+            }
+          }
+        }
+      }
+    },
+    "paths": {
+      "/chat/": {
+        "post": {
+          "summary": "Send a new message",
+          "description": "Allows users to send a new message in a group chat.",
+          "operationId": "sendMessage",
+          "tags": [
+            "Chat"
+          ],
+          "requestBody": {
+            "description": "The message to be sent in the group chat",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Message"
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Message successfully sent.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ChatResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request, validation failed.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/chat/{groupId}": {
+        "get": {
+          "summary": "Get all messages for a specific group",
+          "description": "Fetches all the messages sent to a particular group chat.",
+          "operationId": "getMessages",
+          "tags": [
+            "Chat"
+          ],
+          "parameters": [
+            {
+              "name": "groupId",
+              "in": "path",
+              "required": true,
+              "description": "The ID of the group to get messages for.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved group messages.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/MessagesResponse"
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Bad request, invalid group ID.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            },
+            "500": {
+              "description": "Internal server error.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/Error"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  

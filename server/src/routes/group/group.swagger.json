@@ -1,0 +1,454 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+      "description": "API for managing groups, including creation, membership, and invitations.",
+      "title": "Group API",
+      "version": "1.0.0"
+    },
+    "paths": {
+      "/group/": {
+        "post": {
+          "summary": "Create a new group",
+          "description": "Creates a new group and adds the group owner.",
+          "operationId": "createGroup",
+          "tags": [
+            "Group"
+          ],
+          "requestBody": {
+            "description": "The data needed to create a new group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "groupName": {
+                      "type": "string",
+                      "description": "The name of the group."
+                    },
+                    "description": {
+                      "type": "string",
+                      "description": "The description of the group."
+                    },
+                    "ownerId": {
+                      "type": "string",
+                      "description": "The ID of the owner creating the group."
+                    }
+                  },
+                  "required": [
+                    "groupName",
+                    "ownerId"
+                  ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "201": {
+              "description": "Group created successfully",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Group created successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid input data",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Invalid group name or owner ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/group/": {
+        "get": {
+          "summary": "Get all groups",
+          "description": "Fetches all groups a person is associated with (as a member or owner).",
+          "operationId": "getAllGroups",
+          "tags": [
+            "Group"
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved all groups.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "groupId": {
+                          "type": "string",
+                          "description": "The unique ID of the group."
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the group."
+                        },
+                        "description": {
+                          "type": "string",
+                          "description": "The description of the group."
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/group/{id}": {
+        "get": {
+          "summary": "Get a group by ID",
+          "description": "Fetches a group by its ID.",
+          "operationId": "getGroupById",
+          "tags": [
+            "Group"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The ID of the group to retrieve.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Successfully retrieved the group details.",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "groupId": {
+                        "type": "string",
+                        "description": "The unique ID of the group."
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the group."
+                      },
+                      "description": {
+                        "type": "string",
+                        "description": "The description of the group."
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid group ID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Invalid group ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/group/{id}/members": {
+        "post": {
+          "summary": "Add members to a group",
+          "description": "Adds one or more members to a group.",
+          "operationId": "addMembers",
+          "tags": [
+            "Group"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The ID of the group to which members are being added.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "requestBody": {
+            "description": "The list of members to add to the group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "members": {
+                      "type": "array",
+                      "items": {
+                        "type": "string",
+                        "description": "The user IDs of the members being added."
+                      }
+                    }
+                  },
+                  "required": [
+                    "members"
+                  ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Members successfully added to the group",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Members added successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid user IDs or group ID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Invalid member or group ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "delete": {
+          "summary": "Remove members from a group",
+          "description": "Removes one or more members from a group.",
+          "operationId": "removeMembers",
+          "tags": [
+            "Group"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The ID of the group to remove members from.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Members successfully removed from the group",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Members removed successfully"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid user IDs or group ID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Invalid member or group ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/group/{id}/invite": {
+        "post": {
+          "summary": "Generate an invite link",
+          "description": "Generates a unique invite link for a group.",
+          "operationId": "generateInviteLink",
+          "tags": [
+            "Group"
+          ],
+          "parameters": [
+            {
+              "name": "id",
+              "in": "path",
+              "required": true,
+              "description": "The ID of the group to generate the invite link for.",
+              "schema": {
+                "type": "string"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "description": "Invite link successfully generated",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "inviteLink": {
+                        "type": "string",
+                        "example": "http://example.com/invite-link"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid group ID",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Invalid group ID."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "/group/join": {
+        "post": {
+          "summary": "Join a group",
+          "description": "Allows a user to join a group using an invite link.",
+          "operationId": "joinGroup",
+          "tags": [
+            "Group"
+          ],
+          "requestBody": {
+            "description": "The group ID and the invite link to join the group",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "groupId": {
+                      "type": "string",
+                      "description": "The group ID to join."
+                    },
+                    "inviteLink": {
+                      "type": "string",
+                      "description": "The invite link for the group."
+                    }
+                  },
+                  "required": [
+                    "groupId",
+                    "inviteLink"
+                  ]
+                }
+              }
+            }
+          },
+          "responses": {
+            "200": {
+              "description": "Successfully joined the group",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "success": {
+                        "type": "boolean",
+                        "example": true
+                      },
+                      "message": {
+                        "type": "string",
+                        "example": "Successfully joined the group"
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "400": {
+              "description": "Invalid group ID or invite link",
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "object",
+                    "properties": {
+                      "error": {
+                        "type": "string",
+                        "example": "Invalid group ID or invite link."
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
